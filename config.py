@@ -1,0 +1,4 @@
+SECRET_KEY = 'psqokdf4398734w5n459t87df09g'
+GPIOZERO_PIN = 3
+MEDIA_DIR = './media'
+

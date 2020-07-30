@@ -1,0 +1,26 @@
+<!doctype html>
+<title>The Security Panda</title>
+<html>
+  <body>
+    <h1>The Security Panda</h1>
+    <h4>{% if is_armed %}Armed{% else %}Disarmed{% endif %}</h4>
+
+    <div>
+      <img src="{{ url_for('image') }}" alt="What the Panda sees"/>
+    </div>
+
+    <div>
+      {% if is_armed %}
+      <a href="{{ url_for('disarm') }}">Disarm</a>
+      {% else %}
+      <a href="{{ url_for('arm') }}">Arm</a>
+      {% endif %}
+    </div>
+
+    <div>
+      <h4>Images</h4>
+      
+    </div>
+    
+  </body>
+</html>
