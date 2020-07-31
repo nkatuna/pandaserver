@@ -5,7 +5,8 @@ import gpiozero
 import picamera
 from io import BytesIO
 from time import sleep
-from os import path
+import os
+import datetime
 
 
 app = Flask(__name__)
@@ -16,11 +17,22 @@ button = gpiozero.Button(app.config['GPIOZERO_PIN'])
 camera = picamera.PiCamera()
 camera.resolution = (768, 1024)
 
+armed_file = app.config['ARMED_FILE']
 
-is_armed = True
+
+NUM_IMAGES_UPON_WINDOW_OPEN = 20
+SECONDS_SLEEP_BETWEEN_SNAPS = 2
 
 
-def capture_image(to_stream=True):
+def is_armed():
+    with open(armed_file, 'r') as f:
+        if f.read() == 'armed':
+            return True
+        else:
+            return False
+
+
+def capture_image(to_stream=True, file_name='image.jpg'):
     resize_size = (384, 512)
     camera.start_preview()
     sleep(2)  # warmup
@@ -31,9 +43,9 @@ def capture_image(to_stream=True):
         stream.seek(0)
         return stream
     else:
-        filename = path.join(app.config['MEDIA_DIR'], 'image.jpg')
-        camera.capture(filename, resize=resize_size)
-        return filename
+        file_path = os.path.join(app.config['MEDIA_DIR'], file_name)
+        camera.capture(file_path, resize=resize_size)
+        return file_path
 
 
 def capture_video():
@@ -41,21 +53,27 @@ def capture_video():
 
 
 def window_opened():
-    # alarm sounds
-    # send e-mail
-    
-    # take images or video
-    
-    print('Window opened')
+    if not is_armed():
+        return
 
+    folder_name = '{:%Y-%m-%d_%H:%M}'.format(datetime.datetime.now())
+    os.makedirs(os.path.join(app.config['MEDIA_DIR'], folder_name))
+    for i in range(NUM_IMAGES_UPON_WINDOW_OPEN):
+        capture_image(
+            to_stream=False,
+            file_name=os.path.join(folder_name, 'image_{}.jpg'.format(i)))
+        sleep(SECONDS_SLEEP_BETWEEN_SNAPS)
 
+        
 button.when_released = window_opened
 
 
 @app.route('/', methods=['GET'])
 def index():
     context = {
-        'is_armed': is_armed,}
+        'is_armed': is_armed(),
+        'random_querystring': int(
+            datetime.datetime.now().timestamp()),}
     return render_template('index.html', **context)
 
 
@@ -68,13 +86,26 @@ def image():
        mimetype='image/jpg')
 
 
+@app.route('/images/stored', methods=['GET'])
+def stored_image():
+    pass
+
+
 @app.route('/arm', methods=['GET'])
 def arm():
-    is_armed = True
+    with open(armed_file, 'w') as f:
+        f.write('armed')
     return redirect(url_for('index'), code=302)
 
 
 @app.route('/disarm', methods=['GET'])
 def disarm():
-    is_armed = False
+    with open(armed_file, 'w') as f:
+        f.write('disarmed')
+    return redirect(url_for('index'), code=302)
+
+
+@app.route('/simulate', methods=['GET'])
+def simulate_opened():
+    window_opened()
     return redirect(url_for('index'), code=302)
