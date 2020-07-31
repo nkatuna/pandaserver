@@ -21,7 +21,7 @@ armed_file = app.config['ARMED_FILE']
 
 
 NUM_IMAGES_UPON_WINDOW_OPEN = 20
-SECONDS_SLEEP_BETWEEN_SNAPS = 2
+SECONDS_SLEEP_BETWEEN_SNAPS = 0
 
 
 def is_armed():
@@ -68,12 +68,23 @@ def window_opened():
 button.when_released = window_opened
 
 
+def stored_images():
+    media_dir = app.config['MEDIA_DIR']
+    return {folder: [(
+        image_file,
+        image_file.split('.')[0].split('_')[1]
+    ) for image_file in os.listdir(os.path.join(media_dir, folder))
+    ] for folder in os.listdir(media_dir)
+            if not os.path.isfile(os.path.join(media_dir, folder))}
+
+
 @app.route('/', methods=['GET'])
 def index():
     context = {
         'is_armed': is_armed(),
         'random_querystring': int(
-            datetime.datetime.now().timestamp()),}
+            datetime.datetime.now().timestamp()),
+        'stored_images': stored_images(),}
     return render_template('index.html', **context)
 
 
@@ -86,9 +97,16 @@ def image():
        mimetype='image/jpg')
 
 
-@app.route('/images/stored', methods=['GET'])
-def stored_image():
-    pass
+@app.route('/images/stored/<string:folder>/<int:image_id>', methods=['GET'])
+def stored_image(folder, image_id):
+    file_name = os.path.join(
+        app.config['MEDIA_DIR'],
+        folder,
+        'image_{}.jpg'.format(image_id))
+    return send_file(
+        file_name,
+        attachment_filename='image.jpeg',
+        mimetype='image/jpg')
 
 
 @app.route('/arm', methods=['GET'])
