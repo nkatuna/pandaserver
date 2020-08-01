@@ -1,6 +1,6 @@
 # pandaserver: a fire escape window security system
 
-I keep two musical instruments in my office within view of a fire escape window.  **pandaserver** is the web interface for my cheap security system that keeps watch over the window.  It is also a demo project for friends looking to set up their own lightweight webservers.
+I keep a musical instrument in my office within view of a fire escape window.  **pandaserver** is the web interface for my cheap security system that keeps watch over the window.  It is also a demo project for friends looking to set up their own lightweight webservers.
 
 ![The Panda](/media/panda.jpg)
 
@@ -9,7 +9,7 @@ I keep two musical instruments in my office within view of a fire escape window.
 
 I dug out an old raspberry pi for this project, and only had to pick up a camera, a magnetic contact gate, some wire, and a connector for the raspberry pi's GPIO pins.  I soldiered the gate to the wire, and the wire to the GPIO header connector's pins (GND and BCM/SCL 3).  You could use any powered pin, just be sure to update the `GPIOZERO_PIN` setting in [config.py](/config.py).
 
-Before writing any code, I set up a virtual environment in my code folder with `python -m venv venv` and initialized a git repo `git init`.
+Before writing any code, I set up a virtual environment in my code folder with `python -m venv venv` and initialized a git repo (`git init`).
 
 If you would like to run the **pandaserver** on your home raspberry pi, clone this repo (follow github instructions) and installed required packages:
 
