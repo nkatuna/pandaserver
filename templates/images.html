@@ -1,0 +1,14 @@
+<!doctype html>
+<title>The Security Panda's Images: {{ folder }}</title>
+<html>
+  <body>
+    <h2>Images for {{ folder }}</h2>
+
+    {% for image in images %}
+    <div>
+      <h6>{{ image }}</h6>
+      <img src="{{ url_for('stored_image', folder=folder, image=image) }}" alt="{{ image }}"/>
+    </div>
+    {% endfor %}
+  </body>
+</html>
