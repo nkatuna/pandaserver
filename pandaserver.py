@@ -68,14 +68,17 @@ def window_opened():
 button.when_released = window_opened
 
 
-def stored_images():
+def images_folders():
     media_dir = app.config['MEDIA_DIR']
-    return {folder: [(
-        image_file,
-        image_file.split('.')[0].split('_')[1]
-    ) for image_file in os.listdir(os.path.join(media_dir, folder))
-    ] for folder in os.listdir(media_dir)
-            if not os.path.isfile(os.path.join(media_dir, folder))}
+    return [folder.replace('_', ' ') for folder in os.listdir(media_dir)
+            if not os.path.isfile(os.path.join(media_dir, folder))]
+
+
+def images_for_folder(folder):
+    folder = folder.replace(' ', '_')
+    folder_dir = os.path.join(app.config['MEDIA_DIR'], folder)
+    return [image_file for image_file in os.listdir(folder_dir)
+            if os.path.isfile(os.path.join(folder_dir, image_file))]
 
 
 @app.route('/', methods=['GET'])
@@ -84,11 +87,11 @@ def index():
         'is_armed': is_armed(),
         'random_querystring': int(
             datetime.datetime.now().timestamp()),
-        'stored_images': stored_images(),}
+        'images_folders': images_folders(),}
     return render_template('index.html', **context)
 
 
-@app.route('/image', methods=['GET'])
+@app.route('/image/now', methods=['GET'])
 def image():
     image_stream = capture_image()
     return send_file(
@@ -97,16 +100,23 @@ def image():
        mimetype='image/jpg')
 
 
-@app.route('/images/stored/<string:folder>/<int:image_id>', methods=['GET'])
-def stored_image(folder, image_id):
-    file_name = os.path.join(
-        app.config['MEDIA_DIR'],
-        folder,
-        'image_{}.jpg'.format(image_id))
+@app.route('/images/stored/<string:folder>/<string:image>', methods=['GET'])
+def stored_image(folder, image):
     return send_file(
-        file_name,
-        attachment_filename='image.jpeg',
-        mimetype='image/jpg')
+       os.path.join(
+           app.config['MEDIA_DIR'],
+           folder.replace(' ', '_'),
+           image),
+       attachment_filename=image,
+       mimetype='image/jpg')
+
+
+@app.route('/images/stored/<string:folder>', methods=['GET'])
+def stored_images(folder):
+    context = {
+        'folder': folder,
+        'images': images_for_folder(folder),}
+    return render_template('images.html', **context)
 
 
 @app.route('/arm', methods=['GET'])

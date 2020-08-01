@@ -19,8 +19,8 @@
 
     <div>
       <h3>Images</h3>
-      {% for folder, image_files in stored_images.items() %}<div>
-	<p>{{ folder }}:{% for img_file, file_number in image_files %} <a href="{{ url_for('stored_image', folder=folder, image_id=file_number)}}">{{ file_number }}</a>{% endfor %}</p>
+      {% for folder in images_folders %}<div>
+	<p><a href="{{ url_for('stored_images', folder=folder) }}">{{ folder }}</a></p>
       </div>{% endfor %}
     </div>
 
