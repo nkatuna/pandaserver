@@ -20,10 +20,6 @@ camera.resolution = (768, 1024)
 armed_file = app.config['ARMED_FILE']
 
 
-NUM_IMAGES_UPON_WINDOW_OPEN = 20
-SECONDS_SLEEP_BETWEEN_SNAPS = 0
-
-
 def is_armed():
     with open(armed_file, 'r') as f:
         if f.read() == 'armed':
@@ -58,13 +54,15 @@ def window_opened():
 
     folder_name = '{:%Y-%m-%d_%H:%M}'.format(datetime.datetime.now())
     os.makedirs(os.path.join(app.config['MEDIA_DIR'], folder_name))
-    for i in range(NUM_IMAGES_UPON_WINDOW_OPEN):
+
+    num_images = app.config['NUM_IMAGES_UPON_WINDOW_OPEN']
+    for i in range(num_images):
         capture_image(
             to_stream=False,
             file_name=os.path.join(folder_name, 'image_{}.jpg'.format(i)))
-        sleep(SECONDS_SLEEP_BETWEEN_SNAPS)
+        sleep(app.config['SECONDS_SLEEP_BETWEEN_SNAPS'])
 
-        
+
 button.when_released = window_opened
 
 
