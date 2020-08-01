@@ -1,8 +1,6 @@
 # pandaserver: a fire escape window security system
 
-## Purpose
-
-I keep valuable musical instruments in my office within view of a fire escape window.  **pandaserver** is the web interface for my cheap security system that keeps watch over the window.
+I keep two musical instruments in my office within view of a fire escape window.  **pandaserver** is the web interface for my cheap security system that keeps watch over the window.  It is also a demo project for friends looking to set up their own lightweight webservers.
 
 ![The Panda](/media/panda.jpg)
 
