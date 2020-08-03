@@ -19,6 +19,6 @@ Then set the secret key:
 
 `export SECRET_KEY='some long random string that is very secret'`.
 
-I only check the pandaserver from my home network, so I avoid setting up a full proxy server.  Waitress, the WSGI interface, needs to be able to bind to port 80, so I use authbind rather than run waitress as root.
+I only check the pandaserver from my home network, so I avoid setting up a full proxy server.  Waitress, the WSGI interface, needs to be able to bind to port 80.  I use authbind rather than run waitress as root.
 
 I launch the pandaserver with `authbind python waitress_server.py &`.
