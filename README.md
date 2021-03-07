@@ -22,3 +22,5 @@ Then set the secret key:
 I only check the pandaserver from my home network, so I avoid setting up a full proxy server.  Waitress, the WSGI interface, needs to be able to bind to port 80.  I use authbind rather than run waitress as root.
 
 I launch the pandaserver with `authbind python waitress_server.py &`.
+
+
